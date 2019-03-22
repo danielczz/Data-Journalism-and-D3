@@ -23,14 +23,16 @@ var chartGroup = svg.append("g")
 // Import Data
 d3.csv("assets/data/data.csv")
   .then(function(journalismData) {
-    console.log(journalismData);
+
 
     // Step 1: Parse Data/Cast as numbers
     // ==============================
     journalismData.forEach(function(data){
       
       // Healthcare vs. Poverty or Smokers vs. Age
+
       data.healthcare = +data.healthcare;
+      
       data.poverty = +data.poverty;
       data.smokes = +data.smokes;
       data.age = +data.age;
@@ -41,8 +43,7 @@ d3.csv("assets/data/data.csv")
       // healthcareLow,healthcareHigh,obesity,obesityLow,obesityHigh,smokes,
       // smokesLow,smokesHigh,-0.385218228
     });
-
-    // journalismData = journalismData.slice(0,5);
+    // journalismData = journalismData.slice(0,34);
 
     // Step 2: Create scale functions
     // ==============================
@@ -70,6 +71,15 @@ d3.csv("assets/data/data.csv")
 
     // Step 5: Create Circles
     // // ==============================
+  var textGroup = chartGroup.selectAll("circle")
+    .data(journalismData)
+    .enter()
+    .append("text")
+    .text(d => d.abbr)
+    .attr("x", d => xLinearScale(d.age) - 11)
+    .attr("y", d => yLinearScale(d.smokes) + 6.5);
+
+
     var circlesGroup = chartGroup.selectAll("circle")
     .data(journalismData)
     .enter()
@@ -78,16 +88,7 @@ d3.csv("assets/data/data.csv")
     .attr("cy", d => yLinearScale(d.smokes))
     .attr("r", "14")
     .attr("fill", "orange")
-    .attr("opacity", ".7");
-
-    var textGroup = chartGroup.selectAll("text")
-    .data(journalismData)
-    .enter()
-    .append("text")
-    .text(d => d.abbr)
-    .attr("x", d => xLinearScale(d.age))
-    .attr("y", d => yLinearScale(d.smokes));
-
+    .attr("opacity", ".5");
     
     // Step 6: Initialize tool tip
     // ==============================
@@ -96,7 +97,7 @@ d3.csv("assets/data/data.csv")
       .offset([80, -60])
       .html(function(d) {
         return (
-          `State: ${d.state}, ${d.abbr}<br>
+          `${d.state}, ${d.abbr}<br>
           Age (Median): ${d.age}<br>
           Smokers (%): ${d.smokes} <br>`);
       });
